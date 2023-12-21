@@ -1,8 +1,8 @@
-let board;
-let statusText;
-
+const SVG_NS = "http://www.w3.org/2000/svg";
 const INITIAL_SIZE = 12;
 
+let board;
+let statusText;
 let deck = [];
 let cardsOnBoard = [];
 let selectedCards = [];
@@ -64,7 +64,6 @@ function shuffleDeck(deck) {
 function generateCard(data) {
   let {number, symbol, color} = data;
 
-  // Create card element
   let card = document.createElement('div');
   card.classList.add('card');
   card.setAttribute('number', number);
@@ -72,13 +71,21 @@ function generateCard(data) {
   card.setAttribute('color', color);
 
   for (let n = 0; n < number; n++) {
-    let symbolElement = document.createElement('div');
-    symbolElement.classList.add('symbol', symbol, color);
+    let symbolElement = document.createElementNS(SVG_NS, 'svg');
+    symbolElement.classList.add('symbol');
+    symbolElement.setAttribute('viewBox', '0 0 200 400');
+    symbolElement.setAttribute('width', '30px');
+    symbolElement.setAttribute('height', '60px');
+
+    let pathElement = document.createElementNS(SVG_NS, 'use');
+    pathElement.setAttribute('href', '#' + symbol);
+    pathElement.setAttribute('fill', color);
+
+    symbolElement.appendChild(pathElement);
     card.appendChild(symbolElement);
   }
 
   card.addEventListener('click', () => selectCard(card));
-
   return card;
 }
 

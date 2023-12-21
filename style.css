@@ -21,29 +21,5 @@
   height: 60px;
   width: 30px;
   display: inline-block;
-  margin: 5px;
-}
-
-.red {
-  background-color: red;
-}
-
-.green {
-  background-color: green;
-}
-
-.purple {
-  background-color: purple;
-}
-
-.squiggle {
-  clip-path: polygon(35.00% 0.00%,75.00% 0.00%,60.00% 35.00%,100.00% 35.00%,60.00% 100.00%,20% 100%,40.00% 60.00%,0.00% 60.00%);
-}
-
-.diamond {
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-}
-
-.oval {
-  border-radius: 15px;
+  margin: 2px;
 }

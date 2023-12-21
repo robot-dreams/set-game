@@ -4,13 +4,51 @@
     gap: 10px;
     margin-bottom: 20px;
 }
+
 .card {
     border: 1px solid black;
     text-align: center;
     padding: 20px;
     cursor: pointer;
 }
+
 .selected {
     background-color: yellow;
+}
+
+.symbol {
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    margin: 2px;
+}
+
+.diamond {
+    background-color: red;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.squiggle {
+    background-color: green;
+    clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
+}
+
+.oval {
+    background-color: purple;
+    border-radius: 50%;
+}
+
+.solid {
+    background-size: 100% 100%;
+}
+
+.striped {
+    background-size: 100% 10%;
+    background-repeat: repeat-y;
+}
+
+.open {
+    background-image: none;
+    border: 1px solid;
 }
 

@@ -25,6 +25,16 @@ function newGame() {
   }
 }
 
+let timeoutId = null;
+
+function notify(message) {
+  clearTimeout(timeoutId);
+  statusText.innerText = message;
+  timeoutId = setTimeout(function() {
+    statusText.innerText = '';
+  }, 3000);
+}
+
 function generateAllCards() {
   const numbers = [1, 2, 3];
   const symbols = ['diamond', 'squiggle', 'oval'];
@@ -81,14 +91,11 @@ function selectCard(cardElement) {
     selectedCards.push(cardElement);
     if (selectedCards.length === 3) {
       if (checkSet(selectedCards)) {
-        statusText.innerText = 'Set found!';
+        notify('Set found!')
         replaceSelected();
       } else {
-        statusText.innerText = 'Not a valid Set';
+        notify('Not a valid set')
       }
-      setTimeout(function() {
-        statusText.innerText = '';
-      }, 1000);
     }
   }
 }
@@ -113,12 +120,14 @@ function replaceSelected() {
 }
 
 function addCards() {
-  for (let i = 0; i < 3; i++) {
-    if (deck.length > 0) {
+  if (deck.length > 0) {
+    for (let i = 0; i < 3; i++) {
       let newCard = generateCard(deck.pop());
       board.appendChild(newCard);
       cardsOnBoard.push(newCard);
     }
+  } else {
+    notify('No more cards in deck')
   }
 }
 

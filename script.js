@@ -3,6 +3,8 @@ const INITIAL_SIZE = 12;
 
 let board;
 let statusText;
+let dealMoreCardsButton;
+
 let deck = [];
 let cardsOnBoard = [];
 let selectedCards = [];
@@ -10,16 +12,19 @@ let selectedCards = [];
 function newGame() {
   board = document.getElementById('gameBoard');
   statusText = document.getElementById('gameStatus');
+  dealMoreCardsButton = document.getElementById('dealMoreCards');
 
   board.innerHTML = '';
   statusText.innerText = '';
+  dealMoreCardsButton.removeAttribute('disabled');
+
   deck = generateAllCards();
   cardsOnBoard = [];
   selectedCards = [];
 
   // Generate and display cards
   for (let i = 0; i < 12; i++) {
-    let card = generateCard(deck.pop());
+    let card = drawNextCard();
     board.appendChild(card);
     cardsOnBoard.push(card);
   }
@@ -61,8 +66,11 @@ function shuffleDeck(deck) {
   }
 }
 
-function generateCard(data) {
-  let {number, symbol, color} = data;
+function drawNextCard() {
+  let {number, symbol, color} = deck.pop();
+  if (deck.length === 0) {
+    dealMoreCardsButton.setAttribute('disabled', "");
+  }
 
   let card = document.createElement('div');
   card.classList.add('card');
@@ -112,7 +120,7 @@ function replaceSelected() {
   for (let card of cardsOnBoard) {
     if (card.classList.contains('selected')) {
       if (deck.length > 0 && cardsOnBoard.length <= INITIAL_SIZE) {
-        let newCard = generateCard(deck.pop());
+        let newCard = drawNextCard();
         board.replaceChild(newCard, card);
         newBoard.push(newCard);
       }
@@ -126,15 +134,11 @@ function replaceSelected() {
   cardsOnBoard = newBoard;
 }
 
-function addCards() {
-  if (deck.length > 0) {
-    for (let i = 0; i < 3; i++) {
-      let newCard = generateCard(deck.pop());
-      board.appendChild(newCard);
-      cardsOnBoard.push(newCard);
-    }
-  } else {
-    notify('No more cards in deck')
+function dealMoreCards() {
+  for (let i = 0; i < 3; i++) {
+    let newCard = drawNextCard();
+    board.appendChild(newCard);
+    cardsOnBoard.push(newCard);
   }
 }
 
@@ -160,4 +164,4 @@ function getRandomInt(min, max) {
 
 newGame();
 document.getElementById('newGame').addEventListener('click', newGame);
-document.getElementById('addCards').addEventListener('click', addCards);
+document.getElementById('dealMoreCards').addEventListener('click', dealMoreCards);

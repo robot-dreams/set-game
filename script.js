@@ -1,29 +1,30 @@
+"use strict";
+
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-let initialSize;
-let board;
-let statusText;
-let cardsLeftText;
+const board = document.getElementById('gameBoard');
+const statusText = document.getElementById('gameStatus');
+const cardsLeftText = document.getElementById('cardsLeft');
 
+const properties = ['number', 'symbol', 'color', 'shade'];
+const numbers = [1, 2, 3];
+const symbols = ['diamond', 'squiggle', 'oval'];
+const colors = ['red', 'green', 'purple'];
+const shades = ['filled', 'outline', 'striped'];
+
+let targetCards;
 let deck = [];
-let cardsOnBoard = [];
-let selectedCards = [];
+let selected = [];
 
-function newGame(simplified) {
-  initialSize = simplified ? 9 : 12;
-  board = document.getElementById('gameBoard');
-  statusText = document.getElementById('gameStatus');
-  cardsLeftText = document.getElementById('cardsLeft');
-
+function newGame(simple) {
   board.innerHTML = '';
   statusText.innerText = '';
 
-  deck = generateAllCards(simplified);
-  cardsOnBoard = [];
-  selectedCards = [];
-
-  while (cardsOnBoard.length < initialSize || !setOnBoard()) {
-    dealMoreCards();
+  targetCards = simple ? 9 : 12;
+  newShuffledDeck(simple);
+  selected = [];
+  while (board.children.length < targetCards || !boardHasSet()) {
+    dealThree();
   }
 }
 
@@ -34,44 +35,28 @@ function notify(message) {
   statusText.innerText = message;
   timeoutId = setTimeout(function() {
     statusText.innerText = '';
-  }, 3000);
+  }, 1000);
 }
 
-function generateAllCards(simplified) {
-  const numbers = [1, 2, 3];
-  const symbols = ['diamond', 'squiggle', 'oval'];
-  const colors = ['red', 'green', 'purple'];
-  let shades;
-  if (simplified) {
-    shades = ['filled'];
-  } else {
-    shades = ['filled', 'outline', 'striped'];
-  }
-
-  let deck = [];
-
+function newShuffledDeck(simple) {
+  deck = []
   for (let number of numbers) {
     for (let symbol of symbols) {
       for (let color of colors) {
-        for (let shade of shades) {
+        for (let shade of (simple ? [shades[0]] : shades)) {
           deck.push({number, symbol, color, shade});
         }
       }
     }
   }
-
-  shuffleDeck(deck);
-  return deck;
-}
-
-function shuffleDeck(deck) {
+  // Knuth shuffle
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]]; // Swap elements
+    [deck[i], deck[j]] = [deck[j], deck[i]];
   }
 }
 
-function drawNextCard() {
+function getNewCard() {
   let {number, symbol, color, shade} = deck.pop();
   cardsLeftText.innerText = `${deck.length} cards left in deck`;
 
@@ -89,19 +74,21 @@ function drawNextCard() {
     symbolElement.setAttribute('width', '30px');
     symbolElement.setAttribute('height', '60px');
 
-    let pathElement = document.createElementNS(SVG_NS, 'use');
-    pathElement.setAttribute('href', '#' + symbol);
-    // fill
-    if (shade == 'outline') {
-      pathElement.setAttribute('fill', 'transparent');
-    } else {
-      pathElement.setAttribute('fill', color);
+    let shadeElement = document.createElementNS(SVG_NS, 'use');
+    shadeElement.setAttribute('href', '#' + symbol);
+    switch (shade) {
+      case 'filled':
+        shadeElement.setAttribute('fill', color);
+        break
+      case 'outline':
+        shadeElement.setAttribute('fill', 'transparent');
+        break;
+      case 'striped':
+        shadeElement.setAttribute('fill', color);
+        shadeElement.setAttribute('mask', 'url(#mask-stripe)');
+        break;
     }
-    // mask
-    if (shade == 'striped') {
-      pathElement.setAttribute('mask', 'url(#mask-stripe)');
-    }
-    symbolElement.appendChild(pathElement);
+    symbolElement.appendChild(shadeElement);
 
     let strokeElement = document.createElementNS(SVG_NS, 'use');
     strokeElement.setAttribute('href', '#' + symbol);
@@ -109,22 +96,23 @@ function drawNextCard() {
     strokeElement.setAttribute('fill', 'none');
     strokeElement.setAttribute('stroke-width', '15');
     symbolElement.appendChild(strokeElement);
+
     card.appendChild(symbolElement);
   }
 
-  card.addEventListener('click', () => selectCard(card));
+  card.addEventListener('click', () => toggleSelected(card));
   return card;
 }
 
-function selectCard(cardElement) {
-  if (cardElement.classList.contains('selected')) {
-    cardElement.classList.remove('selected');
-    selectedCards = selectedCards.filter(card => card !== cardElement);
-  } else if (selectedCards.length < 3) {
-    cardElement.classList.add('selected');
-    selectedCards.push(cardElement);
-    if (selectedCards.length === 3) {
-      if (checkSet(selectedCards)) {
+function toggleSelected(card) {
+  if (card.classList.contains('selected')) {
+    card.classList.remove('selected');
+    selected = selected.filter(item => item !== card);
+  } else if (selected.length < 3) {
+    card.classList.add('selected');
+    selected.push(card);
+    if (selected.length === 3) {
+      if (isSet(selected)) {
         notify('Set found!')
         replaceSelected();
       } else {
@@ -134,65 +122,48 @@ function selectCard(cardElement) {
   }
 }
 
-function checkGameOver() {
-  if (deck.length === 0 && !setOnBoard()) {
+function replaceSelected() {
+  for (let card of selected) {
+    if (deck.length > 0 && board.children.length <= targetCards) {
+      board.replaceChild(getNewCard(), card);
+    } else {
+      card.remove();
+    }
+  }
+  selected = [];
+  while (deck.length > 0 && !boardHasSet()) {
+    dealThree();
+  }
+  if (deck.length === 0 && !boardHasSet()) {
     setTimeout(function() {
       alert('Game over!');
     }, 0);
   }
 }
 
-function replaceSelected() {
-  newBoard = []
-  for (let card of cardsOnBoard) {
-    if (card.classList.contains('selected')) {
-      if (deck.length > 0 && cardsOnBoard.length <= initialSize) {
-        let newCard = drawNextCard();
-        board.replaceChild(newCard, card);
-        newBoard.push(newCard);
-      }
-      card.remove();
-    } else {
-      newBoard.push(card);
-    }
-  }
-  selectedCards = [];
-  cardsOnBoard = newBoard;
-  while (deck.length > 0 && !setOnBoard()) {
-    dealMoreCards();
-  }
-  checkGameOver();
-}
-
-function dealMoreCards() {
+function dealThree() {
   for (let i = 0; i < 3; i++) {
-    let newCard = drawNextCard();
-    board.appendChild(newCard);
-    cardsOnBoard.push(newCard);
+    board.appendChild(getNewCard());
   }
-  checkGameOver();
 }
 
-function checkSet(cards) {
-  const properties = ['number', 'symbol', 'color', 'shade'];
-
-  for (let prop of properties) {
-    let values = cards.map(card => card.getAttribute(prop));
+function isSet(cards) {
+  for (let property of properties) {
+    let values = cards.map(card => card.getAttribute(property));
     let uniqueValues = new Set(values);
     if (uniqueValues.size !== 1 && uniqueValues.size !== 3) {
       return false;
     }
   }
-
   return true;
 }
 
-function setOnBoard() {
-  let n = cardsOnBoard.length;
+function boardHasSet() {
+  let n = board.children.length;
   for (let i = 0; i < n; i++) {
     for (let j = i + 1; j < n; j++) {
       for (let k = j + 1; k < n; k++) {
-        if (checkSet([cardsOnBoard[i], cardsOnBoard[j], cardsOnBoard[k]])) {
+        if (isSet([board.children[i], board.children[j], board.children[k]])) {
           return true;
         }
       }
@@ -201,12 +172,6 @@ function setOnBoard() {
   return false;
 }
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 newGame(true);
-document.getElementById('newGameSimplified').addEventListener('click', function() { newGame(true); });
+document.getElementById('newGameSimple').addEventListener('click', function() { newGame(true); });
 document.getElementById('newGameFull').addEventListener('click', function() { newGame(false); });

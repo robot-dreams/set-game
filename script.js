@@ -3,7 +3,6 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 let initialSize;
 let board;
 let statusText;
-let dealMoreCardsButton;
 let cardsLeftText;
 
 let deck = [];
@@ -14,12 +13,10 @@ function newGame(simplified) {
   initialSize = simplified ? 9 : 12;
   board = document.getElementById('gameBoard');
   statusText = document.getElementById('gameStatus');
-  dealMoreCardsButton = document.getElementById('dealMoreCards');
   cardsLeftText = document.getElementById('cardsLeft');
 
   board.innerHTML = '';
   statusText.innerText = '';
-  dealMoreCardsButton.removeAttribute('disabled');
 
   deck = generateAllCards(simplified);
   cardsOnBoard = [];
@@ -76,9 +73,6 @@ function shuffleDeck(deck) {
 
 function drawNextCard() {
   let {number, symbol, color, shade} = deck.pop();
-  if (deck.length === 0) {
-    dealMoreCardsButton.setAttribute('disabled', "");
-  }
   cardsLeftText.innerText = `${deck.length} cards left in deck`;
 
   let card = document.createElement('div');
@@ -216,4 +210,3 @@ function getRandomInt(min, max) {
 newGame(true);
 document.getElementById('newGameSimplified').addEventListener('click', function() { newGame(true); });
 document.getElementById('newGameFull').addEventListener('click', function() { newGame(false); });
-document.getElementById('dealMoreCards').addEventListener('click', dealMoreCards);

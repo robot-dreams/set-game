@@ -4,6 +4,7 @@ const INITIAL_SIZE = 12;
 let board;
 let statusText;
 let dealMoreCardsButton;
+let cardsLeftText;
 
 let deck = [];
 let cardsOnBoard = [];
@@ -13,6 +14,7 @@ function newGame(simplified) {
   board = document.getElementById('gameBoard');
   statusText = document.getElementById('gameStatus');
   dealMoreCardsButton = document.getElementById('dealMoreCards');
+  cardsLeftText = document.getElementById('cardsLeft');
 
   board.innerHTML = '';
   statusText.innerText = '';
@@ -79,6 +81,7 @@ function drawNextCard() {
   if (deck.length === 0) {
     dealMoreCardsButton.setAttribute('disabled', "");
   }
+  cardsLeftText.innerText = `${deck.length} cards left in deck`;
 
   let card = document.createElement('div');
   card.classList.add('card');

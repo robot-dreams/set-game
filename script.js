@@ -1,6 +1,6 @@
 const SVG_NS = "http://www.w3.org/2000/svg";
-const INITIAL_SIZE = 12;
 
+let initialSize;
 let board;
 let statusText;
 let dealMoreCardsButton;
@@ -11,6 +11,7 @@ let cardsOnBoard = [];
 let selectedCards = [];
 
 function newGame(simplified) {
+  initialSize = simplified ? 9 : 12;
   board = document.getElementById('gameBoard');
   statusText = document.getElementById('gameStatus');
   dealMoreCardsButton = document.getElementById('dealMoreCards');
@@ -24,11 +25,8 @@ function newGame(simplified) {
   cardsOnBoard = [];
   selectedCards = [];
 
-  // Generate and display cards
-  for (let i = 0; i < 12; i++) {
-    let card = drawNextCard();
-    board.appendChild(card);
-    cardsOnBoard.push(card);
+  while (cardsOnBoard.length < initialSize || !setOnBoard()) {
+    dealMoreCards();
   }
 }
 
@@ -142,11 +140,19 @@ function selectCard(cardElement) {
   }
 }
 
+function checkGameOver() {
+  if (deck.length === 0 && !setOnBoard()) {
+    setTimeout(function() {
+      alert('Game over!');
+    }, 0);
+  }
+}
+
 function replaceSelected() {
   newBoard = []
   for (let card of cardsOnBoard) {
     if (card.classList.contains('selected')) {
-      if (deck.length > 0 && cardsOnBoard.length <= INITIAL_SIZE) {
+      if (deck.length > 0 && cardsOnBoard.length <= initialSize) {
         let newCard = drawNextCard();
         board.replaceChild(newCard, card);
         newBoard.push(newCard);
@@ -156,9 +162,12 @@ function replaceSelected() {
       newBoard.push(card);
     }
   }
-
   selectedCards = [];
   cardsOnBoard = newBoard;
+  while (deck.length > 0 && !setOnBoard()) {
+    dealMoreCards();
+  }
+  checkGameOver();
 }
 
 function dealMoreCards() {
@@ -167,6 +176,7 @@ function dealMoreCards() {
     board.appendChild(newCard);
     cardsOnBoard.push(newCard);
   }
+  checkGameOver();
 }
 
 function checkSet(cards) {
@@ -181,6 +191,20 @@ function checkSet(cards) {
   }
 
   return true;
+}
+
+function setOnBoard() {
+  let n = cardsOnBoard.length;
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      for (let k = j + 1; k < n; k++) {
+        if (checkSet([cardsOnBoard[i], cardsOnBoard[j], cardsOnBoard[k]])) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }
 
 function getRandomInt(min, max) {

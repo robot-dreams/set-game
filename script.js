@@ -117,6 +117,8 @@ function toggleSelected(card) {
         replaceSelected();
       } else {
         notify('Not a valid set')
+        card.classList.remove('selected');
+        selected.pop();
       }
     }
   }

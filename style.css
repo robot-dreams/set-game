@@ -1,6 +1,6 @@
 #gameBoard {
   display: grid;
-  grid-template-columns: repeat(3, 180px);
+  grid-template-columns: repeat(3, 182px);
   gap: 10px;
   margin: 10px;
 }
@@ -18,8 +18,8 @@
 }
 
 .symbol {
-  height: 60px;
-  width: 30px;
+  height: 70px;
+  width: 35px;
   display: inline-block;
   margin: 2px;
 }

@@ -5,12 +5,13 @@
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-  <button id="newGame">New Game</button>
-  <button id="dealMoreCards">Deal More Cards</button>
+  <button id="newGameSimplified">New Game (Simplified)</button>
+  <button id="newGameFull">New Game (Full)</button>
   <span id="gameStatus"></span>
   <div id="gameBoard"></div>
+  <button id="dealMoreCards">Deal More Cards</button>
   <script src="script.js"></script>
-  <!-- SVG paths from https://github.com/ekzhang/setwithfriends/blob/main/public/index.html -->
+  <!-- SVG from https://github.com/ekzhang/setwithfriends/blob/main/public/index.html -->
   <svg width="200" height="400" style="position: fixed; z-index: -1">
     <defs>
       <path
@@ -25,6 +26,23 @@
         id="diamond"
         d="m98.544521,10.311863l-87.830189,189.330815l88.201143,189.644391l88.942329,-190.362741l-89.313283,-188.612465z"
       />
+      <pattern
+        id="pattern-stripe"
+        width="2"
+        height="20"
+        patternUnits="userSpaceOnUse"
+      >
+        <rect width="2" height="8" fill="#fff" />
+      </pattern>
+      <mask id="mask-stripe">
+        <rect
+          x="0"
+          y="0"
+          width="200"
+          height="400"
+          fill="url(#pattern-stripe)"
+        />
+      </mask>
     </defs>
   </svg>
 </body>

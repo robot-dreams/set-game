@@ -9,7 +9,7 @@ let deck = [];
 let cardsOnBoard = [];
 let selectedCards = [];
 
-function newGame() {
+function newGame(simplified) {
   board = document.getElementById('gameBoard');
   statusText = document.getElementById('gameStatus');
   dealMoreCardsButton = document.getElementById('dealMoreCards');
@@ -18,7 +18,7 @@ function newGame() {
   statusText.innerText = '';
   dealMoreCardsButton.removeAttribute('disabled');
 
-  deck = generateAllCards();
+  deck = generateAllCards(simplified);
   cardsOnBoard = [];
   selectedCards = [];
 
@@ -40,17 +40,25 @@ function notify(message) {
   }, 3000);
 }
 
-function generateAllCards() {
+function generateAllCards(simplified) {
   const numbers = [1, 2, 3];
   const symbols = ['diamond', 'squiggle', 'oval'];
   const colors = ['red', 'green', 'purple'];
+  let shades;
+  if (simplified) {
+    shades = ['filled'];
+  } else {
+    shades = ['filled', 'outline', 'striped'];
+  }
 
   let deck = [];
 
   for (let number of numbers) {
     for (let symbol of symbols) {
       for (let color of colors) {
-        deck.push({number, symbol, color});
+        for (let shade of shades) {
+          deck.push({number, symbol, color, shade});
+        }
       }
     }
   }
@@ -67,7 +75,7 @@ function shuffleDeck(deck) {
 }
 
 function drawNextCard() {
-  let {number, symbol, color} = deck.pop();
+  let {number, symbol, color, shade} = deck.pop();
   if (deck.length === 0) {
     dealMoreCardsButton.setAttribute('disabled', "");
   }
@@ -77,6 +85,7 @@ function drawNextCard() {
   card.setAttribute('number', number);
   card.setAttribute('symbol', symbol);
   card.setAttribute('color', color);
+  card.setAttribute('shade', shade);
 
   for (let n = 0; n < number; n++) {
     let symbolElement = document.createElementNS(SVG_NS, 'svg');
@@ -87,9 +96,24 @@ function drawNextCard() {
 
     let pathElement = document.createElementNS(SVG_NS, 'use');
     pathElement.setAttribute('href', '#' + symbol);
-    pathElement.setAttribute('fill', color);
-
+    // fill
+    if (shade == 'outline') {
+      pathElement.setAttribute('fill', 'transparent');
+    } else {
+      pathElement.setAttribute('fill', color);
+    }
+    // mask
+    if (shade == 'striped') {
+      pathElement.setAttribute('mask', 'url(#mask-stripe)');
+    }
     symbolElement.appendChild(pathElement);
+
+    let strokeElement = document.createElementNS(SVG_NS, 'use');
+    strokeElement.setAttribute('href', '#' + symbol);
+    strokeElement.setAttribute('stroke', color);
+    strokeElement.setAttribute('fill', 'none');
+    strokeElement.setAttribute('stroke-width', '15');
+    symbolElement.appendChild(strokeElement);
     card.appendChild(symbolElement);
   }
 
@@ -143,7 +167,7 @@ function dealMoreCards() {
 }
 
 function checkSet(cards) {
-  const properties = ['number', 'symbol', 'color'];
+  const properties = ['number', 'symbol', 'color', 'shade'];
 
   for (let prop of properties) {
     let values = cards.map(card => card.getAttribute(prop));
@@ -162,6 +186,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-newGame();
-document.getElementById('newGame').addEventListener('click', newGame);
+newGame(true);
+document.getElementById('newGameSimplified').addEventListener('click', function() { newGame(true); });
+document.getElementById('newGameFull').addEventListener('click', function() { newGame(false); });
 document.getElementById('dealMoreCards').addEventListener('click', dealMoreCards);

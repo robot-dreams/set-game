@@ -1,6 +1,6 @@
 #gameBoard {
   display: grid;
-  grid-template-columns: repeat(3, 182px);
+  grid-template-columns: repeat(3, 180px);
   gap: 10px;
   margin: 10px;
 }
@@ -14,7 +14,7 @@
 }
 
 .selected {
-  background-color: gainsboro;
+  background-color: aliceblue;
 }
 
 .symbol {

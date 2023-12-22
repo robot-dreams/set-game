@@ -139,7 +139,7 @@ function replaceSelected() {
   if (deck.length === 0 && !boardHasSet()) {
     setTimeout(function() {
       alert('Game over!');
-    }, 0);
+    }, 100);
   }
 }
 

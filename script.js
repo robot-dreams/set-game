@@ -5,23 +5,25 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 const board = document.getElementById('gameBoard');
 const statusText = document.getElementById('gameStatus');
 const cardsLeftText = document.getElementById('cardsLeft');
+const gameMode = document.getElementById('gameMode');
 
-const properties = ['number', 'symbol', 'color', 'shade'];
-const numbers = [1, 2, 3];
-const symbols = ['diamond', 'squiggle', 'oval'];
-const colors = ['red', 'green', 'purple'];
-const shades = ['filled', 'outline', 'striped'];
+const allProperties = ['number', 'shape', 'color', 'fill'];
+const allNumbers = [1, 2, 3];
+const allShapes = ['diamond', 'squiggle', 'oval'];
+const allColors = ['red', 'green', 'purple'];
+const allFills = ['solid', 'blank', 'striped'];
 
 let targetCards;
 let deck = [];
 let selected = [];
 
-function newGame(simple) {
+function newGame() {
+  const mode = gameMode.value;
   board.innerHTML = '';
   statusText.innerText = '';
 
-  targetCards = simple ? 9 : 12;
-  newShuffledDeck(simple);
+  targetCards = mode === 'full' ? 12 : 9;
+  newShuffledDeck(mode);
   selected = [];
   while (board.children.length < targetCards || !boardHasSet()) {
     dealThree();
@@ -38,13 +40,34 @@ function notify(message) {
   }, 1000);
 }
 
-function newShuffledDeck(simple) {
+// Includes both endpoints.
+function randint(a, b) {
+  return a + Math.floor(Math.random() * (b - a + 1));
+}
+
+function randchoice(items) {
+  return items[randint(0, items.length - 1)];
+}
+
+function handleMode(mode, allItems, single) {
+  if (mode === single) {
+    return [randchoice(allItems)];
+  } else {
+    return allItems;
+  }
+}
+
+function newShuffledDeck(mode) {
   deck = []
+  let numbers = handleMode(mode, allNumbers, 'singlenumber');
+  let shapes = handleMode(mode, allShapes, 'singleshape');
+  let colors = handleMode(mode, allColors, 'singlecolor');
+  let fills = handleMode(mode, allFills, 'singlefill');
   for (let number of numbers) {
-    for (let symbol of symbols) {
+    for (let shape of shapes) {
       for (let color of colors) {
-        for (let shade of (simple ? [shades[0]] : shades)) {
-          deck.push({number, symbol, color, shade});
+        for (let fill of fills) {
+          deck.push({number, shape, color, fill});
         }
       }
     }
@@ -66,41 +89,41 @@ function getNewCard() {
   let card = document.createElement('div');
   card.classList.add('card');
   card.setAttribute('number', number);
-  card.setAttribute('symbol', symbol);
+  card.setAttribute('shape', shape);
   card.setAttribute('color', color);
-  card.setAttribute('shade', shade);
+  card.setAttribute('fill', fill);
 
   for (let n = 0; n < number; n++) {
-    let symbolElement = document.createElementNS(SVG_NS, 'svg');
-    symbolElement.classList.add('symbol');
-    symbolElement.setAttribute('viewBox', '0 0 200 400');
-    symbolElement.setAttribute('width', '30px');
-    symbolElement.setAttribute('height', '60px');
+    let shapeElement = document.createElementNS(SVG_NS, 'svg');
+    shapeElement.classList.add('shape');
+    shapeElement.setAttribute('viewBox', '0 0 200 400');
+    shapeElement.setAttribute('width', '30px');
+    shapeElement.setAttribute('height', '60px');
 
-    let shadeElement = document.createElementNS(SVG_NS, 'use');
-    shadeElement.setAttribute('href', '#' + symbol);
-    switch (shade) {
-      case 'filled':
-        shadeElement.setAttribute('fill', color);
+    let fillElement = document.createElementNS(SVG_NS, 'use');
+    fillElement.setAttribute('href', '#' + shape);
+    switch (fill) {
+      case 'solid':
+        fillElement.setAttribute('fill', color);
         break
-      case 'outline':
-        shadeElement.setAttribute('fill', 'transparent');
+      case 'blank':
+        fillElement.setAttribute('fill', 'transparent');
         break;
       case 'striped':
-        shadeElement.setAttribute('fill', color);
-        shadeElement.setAttribute('mask', 'url(#mask-stripe)');
+        fillElement.setAttribute('fill', color);
+        fillElement.setAttribute('mask', 'url(#mask-stripe)');
         break;
     }
-    symbolElement.appendChild(shadeElement);
+    shapeElement.appendChild(fillElement);
 
     let strokeElement = document.createElementNS(SVG_NS, 'use');
-    strokeElement.setAttribute('href', '#' + symbol);
+    strokeElement.setAttribute('href', '#' + shape);
     strokeElement.setAttribute('stroke', color);
     strokeElement.setAttribute('fill', 'none');
     strokeElement.setAttribute('stroke-width', '15');
-    symbolElement.appendChild(strokeElement);
+    shapeElement.appendChild(strokeElement);
 
-    card.appendChild(symbolElement);
+    card.appendChild(shapeElement);
   }
 
   card.addEventListener('click', () => toggleSelected(card));
@@ -153,7 +176,7 @@ function dealThree() {
 }
 
 function isSet(cards) {
-  for (let property of properties) {
+  for (let property of allProperties) {
     let values = cards.map(card => card.getAttribute(property));
     let uniqueValues = new Set(values);
     if (uniqueValues.size !== 1 && uniqueValues.size !== 3) {
@@ -177,6 +200,5 @@ function boardHasSet() {
   return false;
 }
 
-newGame(true);
-document.getElementById('newGameSimple').addEventListener('click', function() { newGame(true); });
-document.getElementById('newGameFull').addEventListener('click', function() { newGame(false); });
+newGame();
+document.getElementById('newGame').addEventListener('click', newGame);

@@ -5,8 +5,16 @@
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-  <button id="newGameSimple">New Game (Simple)</button>
-  <button id="newGameFull">New Game (Full)</button>
+  <select name="gameMode" id="gameMode">
+    <optgroup label="Simplified">
+      <option value="singlenumber">Can't Count</option>
+      <option value="singleshape">Shape Up!</option>
+      <option value="singlecolor" selected="selected">Monochrome</option>
+      <option value="singlefill">Shady</option>
+    </optgroup>
+    <option value="full">Classic Set</option>
+  </select>
+  <button id="newGame">New Game</button>
   <span id="gameStatus"></span>
   <div id="gameBoard"></div>
   <span id="cardsLeft"></span>

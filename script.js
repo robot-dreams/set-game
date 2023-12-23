@@ -57,8 +57,11 @@ function newShuffledDeck(simple) {
 }
 
 function getNewCard() {
-  let {number, symbol, color, shade} = deck.pop();
-  cardsLeftText.innerText = `${deck.length} cards left in deck`;
+  let {number, shape, color, fill} = deck.pop();
+  cardsLeftText.innerText = `Cards left in deck: ${deck.length}`;
+  if (deck.length === 69) {
+    cardsLeftText.innerText += ' (nice)';
+  }
 
   let card = document.createElement('div');
   card.classList.add('card');

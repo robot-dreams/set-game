@@ -18,9 +18,9 @@ body {
   animation: fadeIn 250ms ease-in-out;
   border: 1px solid black;
   border-radius: 8px;
-  text-align: center;
-  padding: 10px;
   cursor: pointer;
+  padding: 10px;
+  text-align: center;
   width: 160px;
 }
 

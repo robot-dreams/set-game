@@ -142,6 +142,7 @@ function toggleSelected(card) {
       if (isSet(selected)) {
         notify('Set found!')
         replaceSelected();
+        ensureSet();
       } else {
         notify('Not a valid set')
         card.classList.remove('selected');
@@ -152,14 +153,44 @@ function toggleSelected(card) {
 }
 
 function replaceSelected() {
-  for (let card of selected) {
-    if (deck.length > 0 && board.children.length <= targetCards) {
-      board.replaceChild(getNewCard(), card);
-    } else {
-      card.remove();
+  let children = Array.from(board.children);
+  let replacements = [];
+  if (deck.length > 0 && children.length <= targetCards) {
+    for (let i = 0; i < 3; i++) {
+      replacements.push(getNewCard());
+    }
+  } else {
+    let numToMove = 0;
+    for (let i = 0; i < children.length - selected.length; i++) {
+      let card = children[i];
+      if (card.classList.contains('selected')) {
+        numToMove++;
+      }
+    }
+    for (let i = children.length - 1; i >= 0; i--) {
+      let card = children[i];
+      if (!card.classList.contains('selected')) {
+        replacements.push(card);
+        if (replacements.length === numToMove) {
+          break;
+        }
+      }
+    }
+  }
+  for (let i = 0; i < children.length; i++) {
+    let card = children[i];
+    if (card.classList.contains('selected')) {
+      if (replacements.length > 0) {
+        board.replaceChild(replacements.pop(), card);
+      } else {
+        card.remove();
+      }
     }
   }
   selected = [];
+}
+
+function ensureSet() {
   while (deck.length > 0 && !boardHasSet()) {
     dealThree();
   }

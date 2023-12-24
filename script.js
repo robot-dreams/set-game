@@ -83,7 +83,8 @@ function getNewCard() {
   let {number, shape, color, fill} = deck.pop();
   cardsLeftText.innerText = `Cards left in deck: ${deck.length}`;
   if (deck.length === 69) {
-    cardsLeftText.innerText += ' (nice)';
+    // Lenny
+    cardsLeftText.innerText += '\u0020(\u0020\u0361\u00B0\u0020\u035C\u0296\u0020\u0361\u00B0)';
   }
 
   let card = document.createElement('div');

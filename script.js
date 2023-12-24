@@ -1,6 +1,7 @@
 'use strict';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
+const LENNY = '\u0020(\u0020\u0361\u00B0\u0020\u035C\u0296\u0020\u0361\u00B0)';
 
 const board = document.getElementById('gameBoard');
 const statusText = document.getElementById('gameStatus');
@@ -83,8 +84,7 @@ function getNewCard() {
   let {number, shape, color, fill} = deck.pop();
   cardsLeftText.innerText = `Cards left in deck: ${deck.length}`;
   if (deck.length === 69) {
-    // Lenny
-    cardsLeftText.innerText += '\u0020(\u0020\u0361\u00B0\u0020\u035C\u0296\u0020\u0361\u00B0)';
+    cardsLeftText.innerText += LENNY;
   }
 
   let card = document.createElement('div');

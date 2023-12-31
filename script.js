@@ -114,8 +114,6 @@ function getNewCard() {
     let shapeElement = document.createElementNS(SVG_NS, 'svg');
     shapeElement.classList.add('shape');
     shapeElement.setAttribute('viewBox', '0 0 200 400');
-    shapeElement.setAttribute('width', '30px');
-    shapeElement.setAttribute('height', '60px');
 
     let fillElement = document.createElementNS(SVG_NS, 'use');
     fillElement.setAttribute('href', '#' + shape);

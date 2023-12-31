@@ -6,19 +6,30 @@
   <meta name="viewport" content="width=600px">
 </head>
 <body>
-  <select name="gameMode" id="gameMode">
-    <option value="full">Classic Set</option>
-    <optgroup label="Practice Modes">
-      <option value="singlenumber">Can't Count</option>
-      <option value="singleshape">Shape Up</option>
-      <option value="singlecolor" selected="selected">Monochrome</option>
-      <option value="singlefill">Filler</option>
-    </optgroup>
-  </select>
-  <button id="newGame">New Game</button>
-  <span id="gameStatus"></span>
-  <div id="gameBoard"></div>
-  <span id="cardsLeft"></span>
+  <div id="contents">
+    <div class="bar">
+      <select name="gameMode" id="gameMode">
+        <option value="full">Classic Set</option>
+        <optgroup label="Practice Modes">
+          <option value="singlenumber">Can't Count</option>
+          <option value="singleshape">Shape Up</option>
+          <option value="singlecolor" selected="selected">Monochrome</option>
+          <option value="singlefill">Filler</option>
+        </optgroup>
+      </select>
+      <button id="newGame">New Game</button>
+      <span id="spacer"></span>
+      <span id="gameStatus"></span>
+    </div>
+    <div id="gameBoard"></div>
+    <div class="bar">
+      <span class="label">Cards left in deck:&nbsp;</span>
+      <span id="cardsLeft"></span>
+      <span id="spacer"></span>
+      <span class="label">Elapsed time:&nbsp;</span>
+      <span id="elapsedTime"></span>
+    </div>
+  </div>
   <script src="script.js"></script>
   <!-- SVG from https://github.com/ekzhang/setwithfriends/blob/main/public/index.html -->
   <svg width="200" height="400" style="position: fixed; z-index: -1">

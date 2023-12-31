@@ -17,11 +17,27 @@ const allFills = ['solid', 'blank', 'striped'];
 let targetCards;
 let deck = [];
 let selected = [];
+let startTime = null;
+let gameOver = false;
+
+function timer() {
+  if (!gameOver) {
+    let millis = Date.now() - startTime;
+    let seconds = Math.floor(millis / 1000);
+    let minutes = Math.floor(seconds / 60);
+    elapsedTime.innerText = `${minutes}m${seconds % 60}s`
+    setTimeout(timer, 1000);
+  }
+}
 
 function newGame() {
   const mode = gameMode.value;
   board.innerHTML = '';
   statusText.innerText = '';
+  elapsedTime.innerText = '';
+  gameOver = false;
+  startTime = Date.now();
+  timer();
 
   targetCards = mode === 'full' ? 12 : 9;
   newShuffledDeck(mode);
@@ -82,7 +98,7 @@ function newShuffledDeck(mode) {
 
 function getNewCard() {
   let {number, shape, color, fill} = deck.pop();
-  cardsLeftText.innerText = `Cards left in deck: ${deck.length}`;
+  cardsLeftText.innerText = `${deck.length}`;
   if (deck.length === 69) {
     cardsLeftText.innerText += LENNY;
   }
@@ -132,7 +148,9 @@ function getNewCard() {
 }
 
 function toggleSelected(card) {
-  if (card.classList.contains('selected')) {
+  if (gameOver) {
+    notify('No more sets.');
+  } else if (card.classList.contains('selected')) {
     card.classList.remove('selected');
     selected = selected.filter(item => item !== card);
   } else if (selected.length < 3) {
@@ -144,7 +162,7 @@ function toggleSelected(card) {
         replaceSelected();
         ensureSet();
       } else {
-        notify('Not a valid set')
+        notify('Not a set.')
         card.classList.remove('selected');
         selected.pop();
       }
@@ -195,6 +213,7 @@ function ensureSet() {
     dealThree();
   }
   if (deck.length === 0 && !boardHasSet()) {
+    gameOver = true;
     setTimeout(function() {
       alert('Game over!');
     }, 100);

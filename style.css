@@ -1,11 +1,22 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  margin: 10px;
 }
 
 #contents {
   display: flex;
   flex-direction: column;
   max-width: 800px;
+  max-height: 100vh;
+  overflow: auto;
+  width: 100%;
+  border: 1px dashed;
+  border-radius: 10px;
+  padding: 10px;
 }
 
 #gameBoard {

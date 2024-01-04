@@ -186,9 +186,8 @@ function replaceSelected() {
     for (let i = children.length - 1; i >= 0; i--) {
       let card = children[i];
       if (!card.classList.contains('selected')) {
-        replacements.push(card);
-        if (replacements.length === numToMove) {
-          break;
+        if (replacements.length < numToMove) {
+          replacements.push(card);
         }
       }
     }

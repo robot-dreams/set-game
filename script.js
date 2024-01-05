@@ -232,14 +232,11 @@ function dealThree() {
 }
 
 function isSet(cards) {
-  for (let property of allProperties) {
+  return allProperties.every(property => {
     let values = cards.map(card => card.getAttribute(property));
     let uniqueValues = new Set(values);
-    if (uniqueValues.size !== 1 && uniqueValues.size !== 3) {
-      return false;
-    }
-  }
-  return true;
+    return uniqueValues.size === 1 || uniqueValues.size === 3;
+  });
 }
 
 function boardHasSet() {

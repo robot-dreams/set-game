@@ -23,10 +23,11 @@ let gameOver = false;
 function timer() {
   if (!gameOver) {
     let millis = Date.now() - startTime;
-    let seconds = Math.floor(millis / 1000);
-    let minutes = Math.floor(seconds / 60);
-    elapsedTime.innerText = `${minutes}m${seconds % 60}s`
-    elapsedTime.innerHTML = `<span style="color: #999999; text-align: right"><i>Elapsed time:</i></span> ${minutes}m${seconds % 60}s`;
+    let minutes = Math.floor(millis / 1000 / 60);
+    let seconds = Math.floor(millis / 1000 % 60);
+    let mm = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    let ss = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    elapsedTime.innerHTML = `<span style="color: #999999; text-align: right"><i>Elapsed time:</i></span> ${mm}:${ss}`;
     setTimeout(timer, 1000);
   }
 }

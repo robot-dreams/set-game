@@ -251,3 +251,4 @@ function boardHasSet() {
 
 newGame();
 document.getElementById('newGame').addEventListener('click', newGame);
+document.getElementById('gameMode').addEventListener('change', newGame);

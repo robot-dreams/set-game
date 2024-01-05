@@ -24,6 +24,15 @@ body {
   margin: 10px;
 }
 
+#cardsLeft {
+  width: 25%;
+}
+
+#elapsedTime {
+  width: 25%;
+  text-align: right;
+}
+
 .bar {
   display: flex;
 }
@@ -35,6 +44,7 @@ body {
 
 .spacer {
   flex-grow: 1;
+  text-align: center;
 }
 
 @keyframes fadeIn {

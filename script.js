@@ -26,6 +26,7 @@ function timer() {
     let seconds = Math.floor(millis / 1000);
     let minutes = Math.floor(seconds / 60);
     elapsedTime.innerText = `${minutes}m${seconds % 60}s`
+    elapsedTime.innerHTML = `<span style="color: #999999; text-align: right"><i>Elapsed time:</i></span> ${minutes}m${seconds % 60}s`;
     setTimeout(timer, 1000);
   }
 }
@@ -98,7 +99,7 @@ function newShuffledDeck(mode) {
 
 function getNewCard() {
   let {number, shape, color, fill} = deck.pop();
-  cardsLeftText.innerText = `${deck.length}`;
+  cardsLeftText.innerHTML = `<span style="color: #999999"><i>Cards left in deck:</i></span> ${deck.length}`;
   if (deck.length === 69) {
     cardsLeftText.innerText += LENNY;
   }

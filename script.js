@@ -97,12 +97,16 @@ function newShuffledDeck(mode) {
   }
 }
 
-function getNewCard() {
-  let {number, shape, color, fill} = deck.pop();
-  cardsLeftText.innerHTML = `<span style="color: #999999"><i>Cards left in deck:</i></span> ${deck.length}`;
-  if (deck.length === 69) {
+function refreshCardsLeft() {
+  let cardsLeft = deck.length + board.children.length;
+  cardsLeftText.innerHTML = `<span style="color: #999999"><i>Cards left:</i></span> ${cardsLeft}`;
+  if (cardsLeft === 69) {
     cardsLeftText.innerHTML += LENNY;
   }
+}
+
+function getNewCard() {
+  let {number, shape, color, fill} = deck.pop();
 
   let card = document.createElement('div');
   card.classList.add('card');
@@ -160,6 +164,7 @@ function toggleSelected(card) {
         notify('Set found!')
         replaceSelected();
         ensureSet();
+        refreshCardsLeft();
       } else {
         notify('Not a set.')
         card.classList.remove('selected');
@@ -222,6 +227,7 @@ function dealThree() {
   for (let i = 0; i < 3; i++) {
     board.appendChild(getNewCard());
   }
+  refreshCardsLeft();
 }
 
 function isSet(cards) {

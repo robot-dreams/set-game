@@ -54,6 +54,10 @@ body {
   aspect-ratio: 2 / 1;
 }
 
+.card:hover {
+  transform: rotate(-2deg);
+}
+
 .selected {
   background-color: lightgray;
 }

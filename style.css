@@ -58,6 +58,7 @@ body {
 
 .card {
   animation: fadeIn 250ms ease-in-out;
+  transition-duration: 100ms;
   border: 2px outset;
   border-radius: 8px;
   cursor: pointer;

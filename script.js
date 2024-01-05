@@ -101,7 +101,7 @@ function getNewCard() {
   let {number, shape, color, fill} = deck.pop();
   cardsLeftText.innerHTML = `<span style="color: #999999"><i>Cards left in deck:</i></span> ${deck.length}`;
   if (deck.length === 69) {
-    cardsLeftText.innerText += LENNY;
+    cardsLeftText.innerHTML += LENNY;
   }
 
   let card = document.createElement('div');

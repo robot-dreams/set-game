@@ -283,16 +283,17 @@ function analyze() {
   }
 
   console.log('------------------------------------------------------------');
-  console.log('level\tavg\t\tstdev\tmin\t\tmax');
+  console.log('level\tcount\tavg\t\tstdev\tmin\t\tmax');
   for (let level of [1, 2, 3, 4, 'all']) {
     let times = levelToTimes[level];
     if (times.length > 0) {
       let stats = getStats(times);
+      let count = stats.count;
       let avg = stats.avg.toFixed(2);
       let stdev = stats.stdev.toFixed(2);
       let min = stats.min.toFixed(2);
       let max = stats.max.toFixed(2);
-      console.log(`${level}\t\t${avg}\t${stdev}\t${min}\t${max}`);
+      console.log(`${level}\t\t${count}\t\t${avg}\t${stdev}\t${min}\t${max}`);
     }
   }
 }
@@ -310,6 +311,7 @@ function getStats(times) {
     let variance = average(times.map(x => (x - avg)**2));
     let stdev = Math.sqrt(variance);
     return {
+      count: times.length,
       avg: avg,
       stdev: stdev,
       max: Math.max(...times),

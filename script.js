@@ -17,6 +17,7 @@ const allFills = ['solid', 'blank', 'striped'];
 let targetCards;
 let deck = [];
 let selected = [];
+let logEntries = [];
 let startTime = null;
 let gameOver = false;
 
@@ -44,6 +45,7 @@ function newGame() {
   targetCards = mode === 'full' ? 12 : 9;
   newShuffledDeck(mode);
   selected = [];
+  logEntries = [];
   while (board.children.length < targetCards || !boardHasSet()) {
     dealThree();
   }
@@ -163,6 +165,7 @@ function toggleSelected(card) {
     if (selected.length === 3) {
       if (isSet(selected)) {
         notify('Set found!')
+        logEntries.push([Date.now() - startTime, selected]);
         replaceSelected();
         ensureSet();
         refreshCardsLeft();
@@ -218,6 +221,7 @@ function ensureSet() {
   }
   if (deck.length === 0 && !boardHasSet()) {
     gameOver = true;
+    analyze();
     setTimeout(function() {
       alert('Game over!');
     }, 100);
@@ -256,3 +260,72 @@ function boardHasSet() {
 newGame();
 document.getElementById('newGame').addEventListener('click', newGame);
 document.getElementById('gameMode').addEventListener('change', newGame);
+
+////////////////////////////////////////////////////////////
+// Power user stats
+////////////////////////////////////////////////////////////
+
+function analyze() {
+  let levelToTimes = {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    all: [],
+  };
+  for (let i = 0; i < logEntries.length; i++) {
+    let t0 = i > 0 ? logEntries[i - 1][0] : 0;
+    let [t1, cards] = logEntries[i];
+    let level = getLevel(cards);
+    let time = (t1 - t0) / 1000;
+    levelToTimes[level].push(time);
+    levelToTimes['all'].push(time);
+  }
+
+  console.log('------------------------------------------------------------');
+  console.log('level\tavg\t\tstdev\tmin\t\tmax');
+  for (let level of [1, 2, 3, 4, 'all']) {
+    let times = levelToTimes[level];
+    if (times.length > 0) {
+      let stats = getStats(times);
+      let avg = stats.avg.toFixed(2);
+      let stdev = stats.stdev.toFixed(2);
+      let min = stats.min.toFixed(2);
+      let max = stats.max.toFixed(2);
+      console.log(`${level}\t\t${avg}\t${stdev}\t${min}\t${max}`);
+    }
+  }
+}
+
+function average(arr) {
+  return arr.reduce((a, b) => a + b) / arr.length;
+}
+
+function getStats(times) {
+  if (times.length === 0) {
+    return {};
+  } else {
+    let n = times.length;
+    let avg = average(times)
+    let variance = average(times.map(x => (x - avg)**2));
+    let stdev = Math.sqrt(variance);
+    return {
+      avg: avg,
+      stdev: stdev,
+      max: Math.max(...times),
+      min: Math.min(...times),
+    };
+  }
+}
+
+function getLevel(cards) {
+  let result = 0;
+  for (let property of allProperties) {
+    let values = cards.map(card => card.getAttribute(property));
+    let uniqueValues = new Set(values);
+    if (uniqueValues.size === 3) {
+      result++;
+    }
+  }
+  return result;
+}
